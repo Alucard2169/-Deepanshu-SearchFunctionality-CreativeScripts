@@ -26,7 +26,7 @@ const SearchBar: React.FC<SearchBarProps> = ({query,onSearch}) => {
   }, [onSearch]);
 
   return (
-    <form className='relative w-1/4' onSubmit={(e) => e.preventDefault()}>
+    <form className='relative w-[90%] sm:w-1/4' onSubmit={(e) => e.preventDefault()}>
       <label htmlFor="query" className='flex gap-2 items-center border-b border-black pb-3 w-full'>
         <img src={searchLogo} alt="search icon" className='w-5 h-5'/>
         <input

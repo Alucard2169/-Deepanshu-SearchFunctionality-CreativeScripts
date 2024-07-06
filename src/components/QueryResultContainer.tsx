@@ -14,7 +14,7 @@ const QueryResultContainer: React.FC<QueryResultContainerProps> = ({ data, isLoa
 
     return ( 
         <>
-        <div className="w-3/5 flex flex-col gap-4">
+        <div className="w-[90%] sm:w-3/5 flex flex-col gap-4">
         {data.map((book) => (
         <ResultCards book={book} />
       ))}
