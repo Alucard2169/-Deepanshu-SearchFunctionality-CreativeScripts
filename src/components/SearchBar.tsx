@@ -1,29 +1,60 @@
-import React, { useState, useCallback   } from 'react';
+import React, {  useState   } from 'react';
 import searchLogo from '/icons/searchLogo.svg';
 import cross from '/icons/cross.svg';
 import DialogueBox from './DialogueBox';
+import { useSearchContext } from '../context/SearchContext';
+import axios from 'axios';
+import { HashLoader, MoonLoader } from 'react-spinners';
 
-interface SearchBarProps {
-  query: string;
-  onSearch: (query: string) => void;
-}
 
-const SearchBar: React.FC<SearchBarProps> = ({query,onSearch}) => {
+
+const SearchBar = () => {
   const [isDialogueOpen, setIsDialogueOpen] = useState(false);
+  const {query,setQuery,isLoading,setData,setError,setIsLoading} = useSearchContext()
 
 
-  const handleInput = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+  const queryAction = async (query: string, limit: number = 5) => {
+    try {
+        setIsLoading(true);
+        const response = await axios.get(`https://openlibrary.org/search.json?title=${query}&limit=${limit}`);
+        
+        if (response.status !== 200) {
+            throw new Error(`Error: ${response.status}`);
+        }
+        
+        const data = response.data; 
+        if(data.docs === 0){
+            throw new Error("Nothing Found")
+        }
+        setData(data.docs);
+        setError(null);
+    } catch (error: any) {
+        setError(error.message);
+    } finally {
+        setIsLoading(false);
+    }
+};
+
+
+
+
+  const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     if(e.target.value.length >= 3){
       setIsDialogueOpen(false)
+      queryAction(e.target.value)
     }
-    onSearch(e.target.value);
-  }, [onSearch]);
+    else{
+      setIsDialogueOpen(true)
+    }
+    setQuery(e.target.value)
+  }
 
-
-  const handleReset = useCallback(() => {
-    onSearch("")
+  const handleReset =  () => {
+    setQuery('')
     setIsDialogueOpen(false);
-  }, [onSearch]);
+  }
+
+
 
   return (
     <form className='relative w-[90%] sm:w-1/4' onSubmit={(e) => e.preventDefault()}>
@@ -35,19 +66,22 @@ const SearchBar: React.FC<SearchBarProps> = ({query,onSearch}) => {
           name="query"
           value={query}
           onChange={handleInput}
-          onFocus={() => setTimeout(() => setIsDialogueOpen(true), 500)}
-          onBlur={() => setTimeout(() => setIsDialogueOpen(false), 200)}
+          onFocus={() => setTimeout(() => setIsDialogueOpen(true), 200)}
+          onBlur={() => setIsDialogueOpen(false)}
           aria-haspopup="listbox"
           className="outline-none text-sm font-light w-full"
-          placeholder='apple, mango....'
+          placeholder='Lord of the Rings...'
         />
-        <button
+        {isLoading ?<HashLoader 
+        size="16"
+  color="#1f7ae0"
+/> : <button
           type='button'
           onClick={handleReset}
           aria-label='clear input'
         >
           <img src={cross} alt="cross icon" className='w-6 h-6'/>
-        </button>
+        </button>}
       </label>
       {isDialogueOpen && <DialogueBox/>}
     </form>

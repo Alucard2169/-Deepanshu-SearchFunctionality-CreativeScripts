@@ -1,21 +1,10 @@
-import { useCallback, useState } from "react"
 import Navbar from "./components/Navbar"
 import QueryResultContainer from "./components/QueryResultContainer"
 import SearchBar from "./components/SearchBar"
-import useQuery from "./hooks/useQuery";
+
 
 function App() {
-  const [query, setQuery] = useState('');
-  const { data, isLoading, error, fetchData } = useQuery();
-
-  const handleSearch = useCallback((searchQuery: string) => {
-    setQuery(searchQuery);
-    if (searchQuery.length >= 3) {
-      fetchData(searchQuery);
-    }
-  }, [fetchData]);
-
-
+ 
 
   return (
     <>
@@ -23,8 +12,8 @@ function App() {
       <Navbar/>
     </header>
     <main className="flex flex-col items-center gap-20 justify-center pt-6 mb-6">
-      <SearchBar query={query} onSearch={handleSearch}/>
-      <QueryResultContainer data={data} isLoading={isLoading} error={error}/>
+      <SearchBar/>
+      <QueryResultContainer/>
     </main>
     </>
   )
