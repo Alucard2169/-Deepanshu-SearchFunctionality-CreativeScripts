@@ -39,6 +39,6 @@
 
 ## Screenshot
 
-[!desktop](https://github.com/Alucard2169/Deepanshu-SearchFunctionality-CreativeScripts/blob/main/public/screenshot/Screenshot%202024-07-07%20at%2017-43-37%20SearchIt.png?raw=true)")
+![desktop](https://github.com/Alucard2169/Deepanshu-SearchFunctionality-CreativeScripts/blob/main/public/screenshot/Screenshot%202024-07-07%20at%2017-43-37%20SearchIt.png?raw=true)
 
-[!Mobile]("https://github.com/Alucard2169/Deepanshu-SearchFunctionality-CreativeScripts/blob/main/public/screenshot/Screenshot%202024-07-07%20at%2017-44-15%20SearchIt.png?raw=true")
+![Mobile](https://github.com/Alucard2169/Deepanshu-SearchFunctionality-CreativeScripts/blob/main/public/screenshot/Screenshot%202024-07-07%20at%2017-44-15%20SearchIt.png?raw=true)
