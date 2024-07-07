@@ -19,7 +19,10 @@ const Card = () => {
 }
 const CardSkeleton = () => {
     return ( 
-       <ul className="flex flex-col gap-4">
+       <ul className="w-[90%] sm:w-2/3 grid grid-cols-1 -mt-12 sm:grid-cols-2 gap-4 relative">
+        <li> 
+          <Card/>
+        </li>
         <li> 
           <Card/>
         </li>

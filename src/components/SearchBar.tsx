@@ -1,59 +1,52 @@
-import React, {  useCallback, useMemo, useRef,useState   } from 'react';
+import React, { useCallback, useMemo, useRef, useState } from 'react';
 import searchLogo from '/icons/searchLogo.svg';
 import cross from '/icons/cross.svg';
 import DialogueBox from './DialogueBox';
 import { useSearchContext } from '../context/SearchContext';
 import { HashLoader } from 'react-spinners';
-import { queryAlert } from '../actions/queryAction';
+import { queryAction } from '../actions/queryAction';
 import { debounce } from 'lodash';
-
-
 
 const SearchBar = () => {
   const [isDialogueOpen, setIsDialogueOpen] = useState(false);
-  const {query,setQuery,setTotal,isLoading,setData,setError,setIsLoading} = useSearchContext()
+  const { query, setQuery, setTotal, isLoading, setData, setError, setIsLoading } = useSearchContext();
   const abortControllerRef = useRef<AbortController | null>(null);
 
-  const queryAction = useMemo(
-    () => debounce(async (query: string, limit: number = 5) => {
+  const queryActionDebounce = useMemo(
+    () => debounce(async (query: string) => {
       abortControllerRef.current = new AbortController();
-      await queryAlert(query, limit, setIsLoading, setTotal, setData, setError,abortControllerRef.current.signal);
+      await queryAction(query, 1, setIsLoading, setTotal, setData, setError, abortControllerRef.current.signal);
     }, 300),
     [setIsLoading, setTotal, setData, setError]
   );
 
-
-
   const handleInput = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setQuery(value);
-    setIsDialogueOpen(value.length < 3);  
+    setIsDialogueOpen(value.length < 3);
 
     if (abortControllerRef.current) {
       abortControllerRef.current.abort();
     }
 
-
     if (value.length < 3) {
       setData(null);
       setTotal(0);
       setError(null);
-      queryAction.cancel();
+      queryActionDebounce.cancel();
     } else {
-      queryAction(value);
+      queryActionDebounce(value);
     }
-    
-  }, [queryAction, setQuery, setData, setTotal, setError, setIsDialogueOpen]);
-  
+  }, [queryActionDebounce, setQuery, setData, setTotal, setError, setIsDialogueOpen]);
+
   const handleReset = () => {
     setQuery('');
     setData(null);
     setError(null);
     setTotal(0);
     setIsDialogueOpen(false);
-    queryAction.cancel(); 
+    queryActionDebounce.cancel();
   };
-
 
   return (
     <form className='relative w-[90%] sm:w-1/4' onSubmit={(e) => e.preventDefault()}>
@@ -65,26 +58,22 @@ const SearchBar = () => {
           name="query"
           value={query}
           onChange={handleInput}
-          onFocus={() => setTimeout(() => setIsDialogueOpen(true), 200)}
           onBlur={() => setIsDialogueOpen(false)}
           aria-haspopup="listbox"
           className="outline-none text-sm font-light w-full"
           placeholder='Lord of the Rings...'
         />
-        {isLoading ?<HashLoader 
-        size="16"
-  color="#1f7ae0"
-/> : <button
-          type='button'
-          onClick={handleReset}
-          aria-label='clear input'
-        >
-          <img src={cross} alt="cross icon" className='w-6 h-6'/>
-        </button>}
+        {isLoading ? (
+          <HashLoader size={16} color="#1f7ae0" />
+        ) : (
+          <button type='button' onClick={handleReset} aria-label='clear input'>
+            <img src={cross} alt="cross icon" className='w-6 h-6'/>
+          </button>
+        )}
       </label>
-      {isDialogueOpen && <DialogueBox/>}
+      {isDialogueOpen && <DialogueBox />}
     </form>
   );
-}
+};
 
 export default SearchBar;

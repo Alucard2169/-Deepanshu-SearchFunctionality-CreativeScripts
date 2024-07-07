@@ -5,7 +5,7 @@ interface SearchContextType {
     query: string;
     setQuery: (query: string) => void;
     data: Book[] | null;
-    setData: (results: Book[] | null) => void;
+    setData: React.Dispatch<React.SetStateAction<Book[] | null>>;
     error: string | null;
     setError: (error: string | null) => void;
     isLoading: boolean;
@@ -14,7 +14,6 @@ interface SearchContextType {
     setTotal: (total:number) => void;
     load: boolean;
     setLoad: (load: boolean) => void;
-
 }
 
 // Create the context
@@ -27,7 +26,6 @@ const SearchContextProvider = ({ children }: { children: ReactNode }) => {
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [total, setTotal] = useState(0)
     const [load, setLoad] = useState(false)
-
     
 
     const value = {
@@ -42,7 +40,7 @@ const SearchContextProvider = ({ children }: { children: ReactNode }) => {
         error,
         setError,
         isLoading,
-        setIsLoading
+        setIsLoading,
     };
 
     return (
