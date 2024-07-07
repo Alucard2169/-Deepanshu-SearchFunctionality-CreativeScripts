@@ -62,6 +62,7 @@ const SearchBar = () => {
           aria-haspopup="listbox"
           className="outline-none text-sm font-light w-full"
           placeholder='Lord of the Rings...'
+          aria-label='Search query input'
         />
         {isLoading ? (
           <HashLoader size={16} color="#1f7ae0" />

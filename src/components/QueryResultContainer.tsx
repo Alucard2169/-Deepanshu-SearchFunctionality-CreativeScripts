@@ -1,11 +1,11 @@
-import { lazy, useMemo, useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { useSearchContext } from "../context/SearchContext";
 import { Book } from "../types";
 import { queryAction } from "../actions/queryAction";
 import { debounce } from "lodash";
 import CardSkeleton from "./CardSkeleton";
+import ResultCards from "./ResultCards";
 
-const ResultCards = lazy(() => import('./ResultCards'));
 
 const QueryResultContainer = () => {
   const { query, total, data, error, isLoading, setIsLoading, setTotal, setData, setError } = useSearchContext();
@@ -34,7 +34,7 @@ const QueryResultContainer = () => {
 
   return (
     <>
-      {error && <p className="bg-PRIMARY_BG p-2 rounded-md text-center text-white">{error}</p>}
+      {error && <p className="bg-PRIMARY_BG p-2 rounded-md text-center text-white" aria-label="error text">{error}</p>}
       <section className="w-[90%] sm:w-2/3 grid grid-cols-1 sm:grid-cols-2 gap-4 relative">
         {data && !isLoading && data.map((item: Book) => (
           <ResultCards book={item} key={item.key} />
@@ -43,8 +43,8 @@ const QueryResultContainer = () => {
       {isLoading ? <CardSkeleton/> : null}
       {data && total > data.length && (
         <div className="flex items-center gap-4">
-        {page > 1 ? <button  className="text-white flex items-center bg-gray-800 p-1 rounded-sm " onClick={handlePrevPage}>Previous Page</button> : null }
-        <button className="text-white flex items-center bg-PRIMARY_BG p-1 rounded-sm" onClick={handleLoadMore}>
+        {page > 1 ? <button  className="text-white flex items-center bg-gray-800 p-1 rounded-sm " onClick={handlePrevPage} aria-label="buttonn to previous page result">Previous Page</button> : null }
+        <button className="text-white flex items-center bg-PRIMARY_BG p-1 rounded-sm" onClick={handleLoadMore} aria-label="button to next page result">
           Next Page
         </button>
         </div>
