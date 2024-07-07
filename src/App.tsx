@@ -1,3 +1,4 @@
+
 import Navbar from "./components/Navbar"
 import QueryResultContainer from "./components/QueryResultContainer"
 import SearchBar from "./components/SearchBar"
@@ -13,7 +14,9 @@ function App() {
     </header>
     <main className="flex flex-col items-center gap-20 justify-center pt-6 mb-6">
       <SearchBar/>
+  
       <QueryResultContainer/>
+
     </main>
     </>
   )

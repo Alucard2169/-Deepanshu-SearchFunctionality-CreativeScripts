@@ -1,59 +1,58 @@
-import React, {  useState   } from 'react';
+import React, {  useCallback, useMemo, useRef,useState   } from 'react';
 import searchLogo from '/icons/searchLogo.svg';
 import cross from '/icons/cross.svg';
 import DialogueBox from './DialogueBox';
 import { useSearchContext } from '../context/SearchContext';
-import axios from 'axios';
-import { HashLoader, MoonLoader } from 'react-spinners';
+import { HashLoader } from 'react-spinners';
+import { queryAlert } from '../actions/queryAction';
+import { debounce } from 'lodash';
 
 
 
 const SearchBar = () => {
   const [isDialogueOpen, setIsDialogueOpen] = useState(false);
-  const {query,setQuery,isLoading,setData,setError,setIsLoading} = useSearchContext()
+  const {query,setQuery,setTotal,isLoading,setData,setError,setIsLoading} = useSearchContext()
+  const abortControllerRef = useRef<AbortController | null>(null);
+
+  const queryAction = useMemo(
+    () => debounce(async (query: string, limit: number = 5) => {
+      abortControllerRef.current = new AbortController();
+      await queryAlert(query, limit, setIsLoading, setTotal, setData, setError,abortControllerRef.current.signal);
+    }, 300),
+    [setIsLoading, setTotal, setData, setError]
+  );
 
 
-  const queryAction = async (query: string, limit: number = 5) => {
-    try {
-        setIsLoading(true);
-        const response = await axios.get(`https://openlibrary.org/search.json?title=${query}&limit=${limit}`);
-        
-        if (response.status !== 200) {
-            throw new Error(`Error: ${response.status}`);
-        }
-        
-        const data = response.data; 
-        if(data.docs === 0){
-            throw new Error("Nothing Found")
-        }
-        setData(data.docs);
-        setError(null);
-    } catch (error: any) {
-        setError(error.message);
-    } finally {
-        setIsLoading(false);
+
+  const handleInput = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setQuery(value);
+    setIsDialogueOpen(value.length < 3);  
+
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
     }
-};
 
 
-
-
-  const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if(e.target.value.length >= 3){
-      setIsDialogueOpen(false)
-      queryAction(e.target.value)
+    if (value.length < 3) {
+      setData(null);
+      setTotal(0);
+      setError(null);
+      queryAction.cancel();
+    } else {
+      queryAction(value);
     }
-    else{
-      setIsDialogueOpen(true)
-    }
-    setQuery(e.target.value)
-  }
-
-  const handleReset =  () => {
-    setQuery('')
+    
+  }, [queryAction, setQuery, setData, setTotal, setError, setIsDialogueOpen]);
+  
+  const handleReset = () => {
+    setQuery('');
+    setData(null);
+    setError(null);
+    setTotal(0);
     setIsDialogueOpen(false);
-  }
-
+    queryAction.cancel(); 
+  };
 
 
   return (

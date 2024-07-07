@@ -10,7 +10,7 @@ export interface Book {
   
 
 export interface QueryResultContainerProps {
-    data: Book[] | null;
+    data: null | Book[];
     isLoading: boolean;
     error: string | null;
   }
